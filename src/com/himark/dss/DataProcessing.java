@@ -337,7 +337,7 @@ public class DataProcessing {
 				m_rs = m_pstmt.executeQuery();
 				
 				while (m_rs.next()) {
-					m_list.add(new Manager(m_rs.getString("승인자아이디"),m_rs.getString("승인대상"),null,null,null));
+					m_list.add(new Manager(m_rs.getString("승인자아이디"),m_rs.getString("승인대상"),"T1",null,null));
 				}
 				
 
