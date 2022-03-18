@@ -35,7 +35,7 @@ public class DataSynchronization {
 		DataProcessing.manageTable(m_conn, c_conn, "dept");
 		DataProcessing.manageTable(m_conn, c_conn, "duty");
 		DataProcessing.manageTable(m_conn, c_conn, "pos");
-//		DataProcessing.manageTable(m_conn, c_conn, "manager");
+		DataProcessing.manageTable(m_conn, c_conn, "manager");
 	}
 		
 }

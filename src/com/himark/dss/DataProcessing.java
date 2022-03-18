@@ -326,29 +326,24 @@ public class DataProcessing {
 				
 			} else {
 				LinkedList<Manager> m_list = new LinkedList<Manager>();
-				LinkedList<Manager> c_list = new LinkedList<Manager>();
-
+				
+				sql="truncate table manager";
+				m_pstmt = m_conn.prepareStatement(sql);
+				m_pstmt.executeUpdate();
+				
+				sql = "select A.user_id as '승인자아이디', B.user_id  as '승인대상' from (select u.user_id, de.dept_id from user as u left join dept as de on u.dept_id = de.upper_dept_id join duty as du on u.duty_id = du.duty_id where du.duty_name not in('사원')) as A join (select U.user_id, U.dept_id from user as u join (select de.dept_id from user as u left join dept as de on u.dept_id = de.upper_dept_id) as D on u.dept_id = D.dept_id join duty as du on u.duty_id = du.duty_id  where du.duty_name not in('사원') order by u.user_id ASC) as B on A.dept_id = B.dept_id union all select C.user_id, D.user_id from (select u.user_id, u.dept_id from user as u join duty as d on u.duty_id = d.duty_id where d.duty_name = '팀장') as C right join ( select u.user_id, u.dept_id from user as u join (select de.dept_id from user as u left join dept as de on u.dept_id = de.upper_dept_id) as D on u.dept_id = D.dept_id join duty as du on u.duty_id = du.duty_id where du.duty_name in('사원') order by u.user_id ASC) as D on C.dept_id = D.dept_id ;";
+				
+				m_pstmt = m_conn.prepareStatement(sql);
+				m_rs = m_pstmt.executeQuery();
+				
 				while (m_rs.next()) {
-					m_list.add(new Manager(m_rs.getString("manager_id"), m_rs.getString("approval_target"),
-							m_rs.getString("classify_target"), m_rs.getString("approval_start"),
-							m_rs.getString("approval_finish")));
+					m_list.add(new Manager(m_rs.getString("승인자아이디"),m_rs.getString("승인대상"),null,null,null));
 				}
-
-				while (c_rs.next()) {
-					c_list.add(new Manager(c_rs.getString("manager_id"), c_rs.getString("approval_target"),
-							c_rs.getString("classify_target"), c_rs.getString("approval_start"),
-							c_rs.getString("approval_finish")));
-				}
+				
 
 				// 확인
 				System.out.println("마크애니 manager");
 				for (Manager manager : m_list) {
-					System.out.println(manager);
-				}
-				System.out.println();
-
-				System.out.println("고객사 manager");
-				for (Manager manager : c_list) {
 					System.out.println(manager);
 				}
 				System.out.println();
