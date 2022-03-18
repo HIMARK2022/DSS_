@@ -24,11 +24,18 @@ public class DataSynchronization {
 		Connection c_conn = DBConnection.getConnectivity(c_url, c_dbId, c_dbPwd);
 		
 		// DB 연결 테스트
-		System.out.println("마크애니 DB 연결 테스트");
-		DBConnection.connectionTest(m_conn);
+//		System.out.println("마크애니 DB 연결 테스트");
+//		DBConnection.connectionTest(m_conn);
 		
-		System.out.println("고객사 DB 테스트");
-		DBConnection.connectionTest(c_conn);
+//		System.out.println("고객사 DB 테스트");
+//		DBConnection.connectionTest(c_conn);
+		
+		// 인사연동
+		DataProcessing.manageTable(m_conn, c_conn, "user");
+		DataProcessing.manageTable(m_conn, c_conn, "dept");
+		DataProcessing.manageTable(m_conn, c_conn, "duty");
+		DataProcessing.manageTable(m_conn, c_conn, "pos");
+//		DataProcessing.manageTable(m_conn, c_conn, "manager");
 	}
 		
 }
