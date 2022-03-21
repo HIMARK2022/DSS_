@@ -117,6 +117,51 @@ public class DataProcessing {
 				m_pstmt.executeBatch();
 				
 				
+				// Map에 고객사 데이터 넣기
+				Map<String, User> userMap2 = c_list.stream()
+										    .collect(Collectors.toMap(User::getUserId, Function.identity()));
+
+				// Map 출력 확인
+				for (String key : userMap2.keySet()) {
+					System.out.println("User: " + key + ", " + userMap2.get(key).getUserName()
+									   + ", " + userMap2.get(key).getPosId()
+									   + ", " + userMap2.get(key).getDutyId()
+									   + ", " + userMap2.get(key).getDeptId()
+									   + ", " + userMap2.get(key).getAuthorityCode());
+				}
+
+				// left join
+				List<User> leftJoinUser2 = m_list.stream()
+										.filter(it -> !userMap2.containsKey(it.getUserId()))
+										.collect(Collectors.toList());
+
+				System.out.println("==== After left join ====");
+				for (User user : leftJoinUser2) {
+					System.out.println(user);
+				}
+
+				// 데이터 삭제 처리
+				sql = "update user set current_state = ? where user_id = ?";
+				m_pstmt = m_conn.prepareStatement(sql);
+				for (int i = 0; i < leftJoinUser2.size(); i++) {
+					m_pstmt.setString(1, "O2");
+					m_pstmt.setString(2, leftJoinUser2.get(i).getUserId());
+					m_pstmt.addBatch();
+					m_pstmt.clearParameters();
+
+					// OutOfMemory를 고려하여 10000건 단위로 update
+					if ((i % 10000) == 0) {
+
+						// Batch 실행
+						m_pstmt.executeBatch();
+
+						// Batch 초기화
+						m_pstmt.clearBatch();
+					}
+				}
+				// 나머지 구문에 대하여 update
+				m_pstmt.executeBatch();
+				
 			} else if (tableName.equals("dept")) {
 				LinkedList<Dept> m_list = new LinkedList<Dept>();
 				LinkedList<Dept> c_list = new LinkedList<Dept>();
